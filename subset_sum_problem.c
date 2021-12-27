@@ -24,27 +24,27 @@
 #include STUDENT_H_FILE
 
 
-//
-// custom data types
-//
-// the STUDENT_H_FILE defines the following constants and data types
-//
-//   #define min_n       24                   --- the smallest n value we will handle
-//   #define max_n       57                   --- the largest n value we will handle
-//   #define n_sums      20                   --- the number of sums for each n value
-//   #define n_problems  (max_n - min_n + 1)  --- the number of n values
-//
-//   typedef unsigned long long integer_t;    ---  64-bit unsigned integer
+
+// //custom data types
+
+// //the STUDENT_H_FILE defines the following constants and data types
+
+//   #define min_n       24                   //--- the smallest n value we will handle
+//   #define max_n       57                   //--- the largest n value we will handle
+//   #define n_sums      20                   //--- the number of sums for each n value
+//   #define n_problems  (max_n - min_n + 1)  //--- the number of n values
+
+//   typedef unsigned long long integer_t;    //---  64-bit unsigned integer
 //   typedef struct
 //   {
-//     int n;                                 --- number of elements of the set (for a valid problem, min_n <= n <= max_n)
-//     integer_t p[max_n];                    --- the elements of the set, already sorted in increasing order (only the first n elements are used)
-//     integer_t sums[n_sums];                --- several sums (problem: for each sum find the corresponding subset)
+//     int n;                                 //--- number of elements of the set (for a valid problem, min_n <= n <= max_n)
+//     integer_t p[max_n];                    //--- the elements of the set, already sorted in increasing order (only the first n elements are used)
+//     integer_t sums[n_sums];                //--- several sums (problem: for each sum find the corresponding subset)
 //   }
-//   subset_sum_problem_data_t;               --- weights p[] and sums for a given value of n
-//
+//   subset_sum_problem_data_t;               //--- weights p[] and sums for a given value of n
+
 //   subset_sum_problem_data_t all_subset_sum_problems[n_problems]; --- // the problems
-//
+
 
 
 //
@@ -64,14 +64,14 @@
 // integer_t b[] -> array de bits
 
 int brute_force(int n,integer_t*p,integer_t desired_sum,int current_index,integer_t partial_sum, integer_t*b){
-  int remaining_sum = (desired_sum - partial_sum);
-
-  if( (partial_sum > desired_sum) || (partial_sum + remaining_sum < desired_sum) ){
-     for(int i = current_index; i < n; i++){
-      b[i]=0;
-    } //zerando todos os outros bits do seguinte ao ultimos
-    return 1; 
-  }
+  
+  // int remaining_sum = (desired_sum - partial_sum);
+  // if( (partial_sum > desired_sum) || (partial_sum + remaining_sum < desired_sum) ){
+  //    for(int i = current_index; i < n; i++){
+  //     b[i]=0;
+  //   } //zerando todos os outros bits do seguinte ao ultimos
+  //   return 1; 
+  // }
   if(desired_sum == partial_sum){
     for(int i = current_index; i < n; i++){
       b[i]=0;
@@ -79,7 +79,6 @@ int brute_force(int n,integer_t*p,integer_t desired_sum,int current_index,intege
     return 1;
   }
   
-
   if (current_index == n){
     return 0;
   }
@@ -90,6 +89,10 @@ int brute_force(int n,integer_t*p,integer_t desired_sum,int current_index,intege
   //Usar o prox elemento
   b[current_index]=1;
   return brute_force(n, p, desired_sum, current_index+1, partial_sum+p[current_index], b);
+}
+
+int improved(integer_t*arr, integer_t val){
+  //do the same thing that was done in python
 }
 
 //  Meet in the middle  //
@@ -132,7 +135,7 @@ int main(void)
   integer_t p[4]={1,2,3,4};
   integer_t b[4];
   printf("  brute_force . %d \n", brute_force(4, p, 5, 0, 0, b));
-  for (int i = 0; i < 3; i++){
+  for (int i = 0; i < 4; i++){
     printf("  Byte Array > index %d = %llu \n",i,b[i]);
   }
   return 0;
