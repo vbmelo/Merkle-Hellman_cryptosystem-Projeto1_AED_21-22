@@ -3,16 +3,15 @@
 //
 // Solution of the first practical assignement (subset sum problem)
 //
-// Place your student numbers and names here
+// 101099 Victor Melo  100480 Airton
 //
 
 #if __STDC_VERSION__ < 199901L
-# error "This code must must be compiled in c99 mode or later (-std=c99)" // to handle the unsigned long long data type
+#error "This code must must be compiled in c99 mode or later (-std=c99)" // to handle the unsigned long long data type
 #endif
 #ifndef STUDENT_H_FILE
-# define STUDENT_H_FILE "101099.h"
+#define STUDENT_H_FILE "000000.h"
 #endif
-
 
 //
 // include files
@@ -23,77 +22,44 @@
 #include "elapsed_time.h"
 #include STUDENT_H_FILE
 
+int brute_force(int n, integer_t *p, integer_t desired_sum, int current_index, integer_t partial_sum, integer_t *b)
+{
 
-
-// //custom data types
-
-// //the STUDENT_H_FILE defines the following constants and data types
-
-//   #define min_n       24                   //--- the smallest n value we will handle
-//   #define max_n       57                   //--- the largest n value we will handle
-//   #define n_sums      20                   //--- the number of sums for each n value
-//   #define n_problems  (max_n - min_n + 1)  //--- the number of n values
-
-//   typedef unsigned long long integer_t;    //---  64-bit unsigned integer
-//   typedef struct
-//   {
-//     int n;                                 //--- number of elements of the set (for a valid problem, min_n <= n <= max_n)
-//     integer_t p[max_n];                    //--- the elements of the set, already sorted in increasing order (only the first n elements are used)
-//     integer_t sums[n_sums];                //--- several sums (problem: for each sum find the corresponding subset)
-//   }
-//   subset_sum_problem_data_t;               //--- weights p[] and sums for a given value of n
-
-//   subset_sum_problem_data_t all_subset_sum_problems[n_problems]; --- // the problems
-
-
-
-//
-// place your code here
-//
-// possible function prototype for a recursive brute-force function:
-//   int brute_force(int n,integer_t p[n],int desired_sum,int current_index,integer_t partial_sum);
-// it sould return 1 when the solution is found and 0 otherwise
-// note, however, that you may get a faster function by reducing the number of function arguments (maybe a single pointer to a struct?)
-//
-// nos da arvore representam a soma parcial e a sequencia binaria que esta associada
-// int n -> representa o numero de elementos do array do teste que estamos a fazer
-// integer_t p[n] -> array de numeros representados por 64 bits de tamanho n
-// int desired_sum -> S desejado
-// int current_index -> indice atual
-// integer_t -> soma parcial
-// integer_t b[] -> array de bits
-
-int brute_force(int n,integer_t*p,integer_t desired_sum,int current_index,integer_t partial_sum, integer_t*b){
-  
   // int remaining_sum = (desired_sum - partial_sum);
   // if( (partial_sum > desired_sum) || (partial_sum + remaining_sum < desired_sum) ){
   //    for(int i = current_index; i < n; i++){
   //     b[i]=0;
   //   } //zerando todos os outros bits do seguinte ao ultimos
-  //   return 1; 
+  //   return 1;
   // }
-  if(desired_sum == partial_sum){
-    for(int i = current_index; i < n; i++){
-      b[i]=0;
-    } //zerando todos os outros bits do seguinte ao ultimos
+  if (desired_sum == partial_sum)
+  {
+    for (int i = current_index; i < n; i++)
+    {
+      b[i] = 0;
+    }
     return 1;
   }
-  
-  if (current_index == n){
+
+  if (current_index == n)
+  {
     return 0;
   }
-  //Nao usar o proximo elemento.(rejeitar o elemento na posicao current_index)
-  b[current_index]=0;
-  int sol_found = brute_force(n, p, desired_sum, current_index+1, partial_sum, b);
-  if (sol_found==1){return 1;}
-  //Usar o prox elemento
-  b[current_index]=1;
-  return brute_force(n, p, desired_sum, current_index+1, partial_sum+p[current_index], b);
+  // Nao usar o proximo elemento.(rejeitar o elemento na posicao current_index)
+  b[current_index] = 0;
+  int sol_found = brute_force(n, p, desired_sum, current_index + 1, partial_sum, b);
+  if (sol_found == 1)
+  {
+    return 1;
+  }
+  // Usar o prox elemento
+  b[current_index] = 1;
+  return brute_force(n, p, desired_sum, current_index + 1, partial_sum + p[current_index], b);
 }
 
-int improved(integer_t*arr, integer_t val){
-  //do the same thing that was done in python
-}
+// int improved(integer_t*arr, integer_t val){
+//   //do the same thing that was done in python
+// }
 
 //  Meet in the middle  //
 
@@ -125,18 +91,43 @@ int improved(integer_t*arr, integer_t val){
 
 int main(void)
 {
-  fprintf(stderr,"Program configuration:\n");
-  fprintf(stderr,"  min_n ....... %d\n",min_n);
-  fprintf(stderr,"  max_n ....... %d\n",max_n);
-  fprintf(stderr,"  n_sums ...... %d\n",n_sums);
-  fprintf(stderr,"  n_problems .. %d\n",n_problems);
-  fprintf(stderr,"  integer_t ... %d bits\n",8 * (int)sizeof(integer_t));
-  
-  integer_t p[4]={1,2,3,4};
-  integer_t b[4];
-  printf("  brute_force . %d \n", brute_force(4, p, 5, 0, 0, b));
-  for (int i = 0; i < 4; i++){
-    printf("  Byte Array > index %d = %llu \n",i,b[i]);
+  fprintf(stderr, "Program configuration:\n");
+  fprintf(stderr, "  min_n ....... %d\n", min_n);
+  fprintf(stderr, "  max_n ....... %d\n", max_n);
+  fprintf(stderr, "  n_sums ...... %d\n", n_sums);
+  fprintf(stderr, "  n_problems .. %d\n", n_problems);
+  fprintf(stderr, "  integer_t ... %d bits\n", 8 * (int)sizeof(integer_t));
+
+  printf("\n\t --- BRUTE FORCE IMPLEMENTATION --- \t\n");
+
+  for (int i = 0; i < n_problems; i++)
+  {
+    int n = all_subset_sum_problems[i].n;
+    integer_t p[n]; // the weights
+    integer_t b[n]; // bit's array
+    for (int k = 0; k < n; k++)
+    {
+      p[k] = all_subset_sum_problems[i].p[k];
+    }
+    if (n > 20)
+    {
+      continue;
+    }
+
+    printf("\n-------------------- Array to work: %d -------------------\n", n);
+    for (int j = 0; j < n_sums; j++)
+    {
+      integer_t desired_sum = all_subset_sum_problems[i].sums[j]; // the desired sum
+      printf("\n desired_sum %llu", desired_sum);
+      brute_force(n, p, desired_sum, 0, 0, b);
+
+      printf(" bits: ");
+      for (int i = 0; i < n; i++)
+      {
+        printf("%lld", b[i]);
+      }
+      printf("\n");
+    }
   }
   return 0;
 }
