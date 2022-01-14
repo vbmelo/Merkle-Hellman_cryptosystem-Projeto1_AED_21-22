@@ -13,10 +13,6 @@
 #define STUDENT_H_FILE "000000.h"
 #endif
 
-//
-// include files
-//
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "elapsed_time.h"
@@ -24,14 +20,6 @@
 
 int brute_force(int n, integer_t *p, integer_t desired_sum, int current_index, integer_t partial_sum, integer_t *b)
 {
-
-  // int remaining_sum = (desired_sum - partial_sum);
-  // if( (partial_sum > desired_sum) || (partial_sum + remaining_sum < desired_sum) ){
-  //    for(int i = current_index; i < n; i++){
-  //     b[i]=0;
-  //   } //zerando todos os outros bits do seguinte ao ultimos
-  //   return 1;
-  // }
   if (desired_sum == partial_sum)
   {
     for (int i = current_index; i < n; i++)
@@ -57,83 +45,89 @@ int brute_force(int n, integer_t *p, integer_t desired_sum, int current_index, i
   return brute_force(n, p, desired_sum, current_index + 1, partial_sum + p[current_index], b);
 }
 
-// int improved(integer_t*arr, integer_t val){
-//   //do the same thing that was done in python
-// }
+int brute_force_2(int n, integer_t *p, integer_t desiredSum, int current_index, integer_t partialSum,  integer_t mask, integer_t *b)
+{
+    //soma já excede -> stop the COUNT
+    if (partialSum > desiredSum)
+        return 0;
 
-//  Meet in the middle  //
+    //obter a soma
+    if (partialSum == desiredSum)
+    {
+        *b = mask;
+        return 1;
+    }
 
-// basicamente temos:
-// i = 0;
-// j = array_length;
-// array[7]={1,3,4,5,6,7}
-// table de exemplo :
-// i   |   j  | soma (a[i] + b[j])
-// -------------------------------
-// 0   |   3  | 16
-// 0   |   3  | 9
-// 1   |   2  | 10
-// 2   |   2  | 12
-// 3   |   2  | 13
-// 4   |   1  | 14
-// 5   |   0  | 15
+    //chegar ao ultimo index (neste caso o 1º (0))
+    if (current_index < 0)
+        return 0;
 
-// tarefas
-// 1 - subdividir o array  dado, criando 2 arrays
-// 2 - para 1 array, fazer todas as possiveis somas de seus elementos (fazer 2 vezes)
-// 3 - ordenar(sort) (fazer 2 vezes)
-// 4 - procurar a solucao, o que fazer se nao encontrar a soma?
-// 5 - resposta em array binario
+    if (brute_force_2(n, p, current_index - 1, partialSum + p[current_index], desiredSum, (mask | (1 << (current_index))), b))
+        return 1;
 
+    else
+        return brute_force_2(n, p, current_index - 1, partialSum, desiredSum, mask, b);
+}
+void showbits2(integer_t x, int total_bits)
+{
+    for (int i = 0; i <= total_bits - 1; i++)
+    {
+        putchar(x & (1u << i) ? '1' : '0');
+    }
+}
 //
 // main program
 //
 
 int main(void)
 {
-  fprintf(stderr, "Program configuration:\n");
-  fprintf(stderr, "  min_n ....... %d\n", min_n);
-  fprintf(stderr, "  max_n ....... %d\n", max_n);
-  fprintf(stderr, "  n_sums ...... %d\n", n_sums);
-  fprintf(stderr, "  n_problems .. %d\n", n_problems);
-  fprintf(stderr, "  integer_t ... %d bits\n", 8 * (int)sizeof(integer_t));
-
-  printf("\n\t --- BRUTE FORCE IMPLEMENTATION --- \t\n");
+  freopen("brute_force.txt","w",stdout);
 
   for (int i = 0; i < n_problems; i++)
   {
+    double somaTempos = 0;
+    double tempoMaximo = 0;
     int n = all_subset_sum_problems[i].n;
-    integer_t p[n]; // the weights
-    integer_t b[n]; // bit's array
+    integer_t *p = malloc(n*sizeof(integer_t)); // the weights
+    // integer_t *b = calloc(n,sizeof(integer_t));  // bit's array
+    integer_t b = 0;
     for (int k = 0; k < n; k++)
     {
       p[k] = all_subset_sum_problems[i].p[k];
-    }
-    if (n > 20)
-    {
-      continue;
     }
 
     printf("\n-------------------- Array to work: %d -------------------\n", n);
     for (int j = 0; j < n_sums; j++)
     {
+      double time = cpu_time();
       integer_t desired_sum = all_subset_sum_problems[i].sums[j]; // the desired sum
-      printf("\n desired_sum %llu", desired_sum);
-      brute_force(n, p, desired_sum, 0, 0, b);
-
-      printf(" bits: ");
-      for (int i = 0; i < n; i++)
-      {
-        printf("%lld", b[i]);
+      // printf("\n desired_sum %llu", desired_sum);
+      // brute_force(n, p, desired_sum, 0, 0, b);
+      if(brute_force_2(n, p, desired_sum, 0, n-1, 0, &b)){  
+        showbits2(b, n);
+        printf("\n");
       }
-      printf("\n");
+      else
+      {
+        printf("\nSoluçao NÃO encontrada!\n");
+      }
+
+      // printf(" bits: ");
+      // for (int i = 0; i < n; i++)
+      // {
+      //   printf("%lld", b[i]);
+      // }
+      // printf("\n");
+      time = cpu_time() - time;
+      somaTempos += time;
+      if (time > tempoMaximo)
+          tempoMaximo = time;
+      
     }
+    double tempoMedio = somaTempos / n_sums;
+    printf("%d %f %f\n", i + 10, tempoMedio, tempoMaximo);
+    // free(b); 
+    free(p);
   }
   return 0;
 }
-
-//  Para Compilar:
-//
-//  gcc subset_sum_problem.c -Wall -o subset_sum_problem
-//  ./subset_sum_problem
-//
